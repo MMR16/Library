@@ -11,16 +11,21 @@ namespace Library.Models
         [Key]
         public int CatId { get; set; }
 
-
         [Required(ErrorMessage = "Please Enter Category Name")]
         [Display(Name = "Category Name")]
-        [StringLength(50, MinimumLength = 3)]
+        [StringLength(50, MinimumLength = 3,ErrorMessage ="Category Name Must Be Between 3 & 50 Letters")]
         public string CatName { get; set; }
 
         [Required(ErrorMessage ="Please Enter Order Number")]
         [Display(Name = "Display Order")]
-        [Range(1,1000)]
+        [Range(1,int.MaxValue,ErrorMessage ="Order Must Be Greater Than Zero")]
         public int DisplayOrder { get; set; }
 
+        public virtual ICollection<Product> Products { get; set; }
+
+        public Category()
+        {
+            Products = new HashSet<Product>();
+        }
     }
 }

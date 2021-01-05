@@ -20,6 +20,7 @@ namespace Library.Data
         }
 
         public virtual DbSet<Category> Categories { set; get; }
+        public virtual DbSet<Product> Products { get; set; }
 
     }
 }

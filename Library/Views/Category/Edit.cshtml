@@ -1,13 +1,14 @@
 ﻿@model Category
 @{
-    ViewData["Title"] = "Add Category";
+    ViewData["Title"] = "Update Category";
 }
 
-<form asp-action="Create" asp-controller="Category" asp-antiforgery="true">
-    <div class="border p-3">
 
+<form asp-action="Edit" asp-controller="Category" asp-antiforgery="true">
+    <div class="border p-3">
+        <input asp-for="CatId" hidden/>
         <div class="form-group row">
-            <h2 class="text-info pl-3">Add Category</h2>
+            <h2 class="text-info pl-3">Update Category</h2>
         </div>
 
         <div class="row">
@@ -35,10 +36,10 @@
                 <div class="form-group row">
                     <div class="col-8 offset-4 row">
                         <div class="col">
-                            <input type="submit" value="Add" class="btn btn-info" />
+                            <input type="submit" value="Update" class="btn btn-success" />
                         </div>
                         <div class="col">
-                            <a asp-controller="Category" asp-action="index" class="btn btn-dark">Back To Categries</a>
+                            <a asp-controller="Category" asp-action="index" class="btn btn-dark"><i class="fa fa-backward">&nbsp;</i> Back To Categries</a>
                         </div>
                     </div>
 
@@ -51,6 +52,8 @@
 </form>
 
 @section Scripts{
-@*@await Html.PartialAsync("_ValidationScriptsPartial.cshtml")*@
-@{<partial name="_ValidationScriptsPartial" />}
- }
+    @*@await Html.PartialAsync("_ValidationScriptsPartial.cshtml")*@
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

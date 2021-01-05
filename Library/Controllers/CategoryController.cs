@@ -41,5 +41,71 @@ namespace Library.Controllers
             }
             return View(Cat);
         }
+
+        [HttpGet]
+        public IActionResult Edit(int? Id)
+        {
+            if (Id is null)
+            {
+                return BadRequest();
+            }
+            bool id = Db.Categories.Any(q => q.CatId == Id);
+             if (id is false)
+            {
+                return NotFound();
+            }
+            var Obj = Db.Categories.Find(Id);
+            return View(Obj);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Category Cat)
+        {
+            if (ModelState.IsValid)
+            {
+                Db.Categories.Update(Cat);
+                Db.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(Cat);
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int? Id)
+        {
+            if (Id is null)
+            {
+                return BadRequest();
+            }
+            bool id = Db.Categories.Any(q => q.CatId == Id);
+            if (id is false)
+            {
+                return NotFound();
+            }
+            var Obj = Db.Categories.Find(Id);
+            return View(Obj);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Delete")]
+        public IActionResult DeleteCat(int? Id)
+        {
+            if (Id is null)
+            {
+                return BadRequest();
+            }
+            bool id = Db.Categories.Any(q => q.CatId == Id);
+            if (id is false)
+            {
+                return NotFound();
+            }
+            var Obj = Db.Categories.Find(Id);
+            Db.Categories.Remove(Obj);
+            Db.SaveChanges();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

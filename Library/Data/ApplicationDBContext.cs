@@ -21,6 +21,8 @@ namespace Library.Data
 
         public virtual DbSet<Category> Categories { set; get; }
         public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<ProType> ProTypes { get; set; }
+
 
     }
 }

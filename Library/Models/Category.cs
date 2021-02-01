@@ -9,6 +9,7 @@ namespace Library.Models
     public class Category
     {
         [Key]
+        [Required(ErrorMessage ="Please Choose A Category")]
         public int CatId { get; set; }
 
         [Required(ErrorMessage = "Please Enter Category Name")]

@@ -38,6 +38,23 @@ namespace Library.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Library.Models.ProType", b =>
+                {
+                    b.Property<int>("TypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("TypeId");
+
+                    b.ToTable("ProTypes");
+                });
+
             modelBuilder.Entity("Library.Models.Product", b =>
                 {
                     b.Property<int>("ProId")

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h1 class="text-primary"> Product List</h1>
+        </div>
+    </div>
+    <div class="row pt-4">
+        <div class="col-md-3 ">
+            <a class="btn btn-primary" asp-action="UpdCreate"> <i class="fa fa-plus"> &nbsp; </i> Add New Product </a>
+        </div>
+    </div>
+    <br />
+    @if (Model.Count() > 0)
+    {
+        <table class=" table table-bordered table-hover text-center">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(w => w.ProName)</th>
+                    <th>@Html.DisplayNameFor(w => w.ProPrice)</th>
+                    <th>@Html.DisplayNameFor(w => w.ProDescription)</th>
+                    <th>@Html.DisplayNameFor(w => w.Category.CatName)</th>
+
+
+                    <th>Operations</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>@Html.DisplayFor(q => item.ProName)</td>
+                    <td>@Html.DisplayFor(q => item.ProPrice)</td>
+                    <td>@Html.DisplayFor(q => item.ProDescription)</td>
+                    <td>@Html.DisplayFor(q => item.Category.CatName)</td>
+
+
+                    <td>
+                        <div class="w-75 btn-group" role="group">
+                            <a  asp-action="UpdCreate" asp-route-Id="@item.ProId" class="btn btn-primary mx-2 "><i class="fa fa-edit"> &nbsp; </i>Edit</a>
+                            <a  asp-action="Delete" asp-route-Id="@item.ProId" class="btn btn-danger mx-2"><i class="fa fa-trash"> &nbsp; </i>Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+
+        </table>
+    }
+    else
+    {
+        <h3 class="text-danger">Their Is No Any Product</h3>
+    }
+</div>

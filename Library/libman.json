@@ -5,6 +5,16 @@
     {
       "library": "font-awesome@4.7.0",
       "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "limonte-sweetalert2@10.14.0",
+      "destination": "wwwroot/lib/limonte-sweetalert2/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "summernote@0.8.18",
+      "destination": "wwwroot/lib/summernote/"
     }
   ]
 }

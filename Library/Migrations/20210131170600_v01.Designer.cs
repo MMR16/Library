@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20210105040041_Adding_Product")]
-    partial class Adding_Product
+    [Migration("20210131170600_v01")]
+    partial class v01
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -38,6 +38,23 @@ namespace Library.Migrations
                     b.HasKey("CatId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Library.Models.ProType", b =>
+                {
+                    b.Property<int>("TypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("TypeId");
+
+                    b.ToTable("ProTypes");
                 });
 
             modelBuilder.Entity("Library.Models.Product", b =>

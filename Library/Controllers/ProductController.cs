@@ -8,16 +8,20 @@ using Library.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Library.ViewModels;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace Library.Controllers
 {
     public class ProductController : Controller
     {
         private readonly ApplicationDBContext Db;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
-        public ProductController(ApplicationDBContext _Db)
+        public ProductController(ApplicationDBContext _Db, IWebHostEnvironment _webHostEnvironment)
         {
             Db = _Db;
+            webHostEnvironment = _webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -32,7 +36,7 @@ namespace Library.Controllers
         {
             //SelectListItem new In .NET Core insted of SelectList & More Better
 
-            ProductViewModel productVM= new ProductViewModel()
+            ProductViewModel productVM = new ProductViewModel()
             {
                 Product = new Product(),
                 CategorySelectList = Db.Categories.Select(q => new SelectListItem
@@ -87,10 +91,38 @@ namespace Library.Controllers
             return View(productVM);
         }
 
+        //uploading image in .NET Core
+        //very important
+        // enable enctype="multipart/form-data" in form
+        //inject IWebHostEnvironment
+        //use the code below I/O
         [HttpPost]
-        public IActionResult UpdCreate()
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdCreate(ProductViewModel productVM)
         {
-            return View();
+            if (ModelState.IsValid)
+           
+            {
+                var files = HttpContext.Request.Form.Files;
+                string webrootbath = webHostEnvironment.WebRootPath;
+                if (productVM.Product.ProId == 0)
+                {
+                    string upload = webrootbath + WC.ImagePath;
+                    //string filename = Path.GetFileName(files[0].FileName); //to get image name
+                    string filename = Guid.NewGuid().ToString(); // to create guid image name to avoid duplication errors
+                    string extention = Path.GetExtension(files[0].FileName);
+                    using (var filestream = new FileStream(Path.Combine(upload, filename + extention), FileMode.Create))
+                    {
+                        files[0].CopyTo(filestream);
+                    }
+                    productVM.Product.ProImage = filename + extention;
+                    Db.Products.Add(productVM.Product);
+                    Db.SaveChanges();
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            return View(productVM);
         }
 
 

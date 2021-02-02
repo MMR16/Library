@@ -50,6 +50,7 @@
                     </div>
                     <div class="col-7">
                         @*<inkput asp-for="Product.ProDescription" class="form-control" />*@
+                        @*summer note id*@
                         <textarea asp-for="Product.ProDescription" id="summernote" class="form-control note-icon-summernote"> </textarea>
                     </div>
                     <div class="col-3"><span asp-validation-for="Product.ProDescription" class="text-danger"></span></div>
@@ -86,11 +87,11 @@
                         <label> Choose Category</label>
                     </div>
                     <div class="col-7">
-                        <select asp-for="Product.Category.CatId" asp-items="@Model.CategorySelectList" class="form-control">
+                        <select asp-for="Product.CatId" asp-items="@Model.CategorySelectList" class="form-control">
                             <option disabled selected>Select Category</option>
                         </select>
                     </div>
-                    <div class="col-3"><span asp-validation-for="Product.Category.CatId" class="text-danger"></span></div>
+                    <div class="col-3"><span asp-validation-for="Product.CatId" class="text-danger"></span></div>
                 </div>
 
 
@@ -127,7 +128,7 @@
         $(document).ready(
             function () {
                 $('#summernote').summernote({
-                    height:250
+                    height: 250
                 });
             }
         )

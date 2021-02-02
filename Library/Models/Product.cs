@@ -31,6 +31,7 @@ namespace Library.Models
         public string ProImage { get; set; }
 
         [ForeignKey("Category")]
+        [Required(ErrorMessage = "Please Choose A Category")]
         public int CatId { get; set; }
 
         public virtual Category Category { get; set; }

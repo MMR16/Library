@@ -4,7 +4,7 @@
 }
 
 <div class="container p-3">
-   
+
     <div class="row pt-4">
         @if (Model.Count() > 0)
         {
@@ -16,7 +16,7 @@
             <div class="col-6"><h1 class="text-primary"> Product List</h1></div>
         }
     </div>
-    
+
     <div class="row pt-4">
         <div class="col-md-3 ">
             <a class="btn btn-primary" asp-action="UpdCreate"> <i class="fa fa-plus"> &nbsp; </i> Add New Product </a>
@@ -43,7 +43,7 @@
                     <tr>
                         <td>@Html.DisplayFor(q => item.ProName)</td>
                         <td>@Html.DisplayFor(q => item.ProPrice)</td>
-                        <td>@Html.DisplayFor(q => item.ProDescription)</td>
+                        <td id="cell" style="word-wrap: break-word;min-width: 160px;max-width: 160px;"> @Html.Raw(item.ProDescription)</td>
                         <td>@Html.DisplayFor(q => item.Category.CatName)</td>
 
 
@@ -56,11 +56,19 @@
                     </tr>
                 }
             </tbody>
-
         </table>
+
+
     }
     else
     {
         <h2 class="text-danger">Their Is No Any Product</h2>
     }
 </div>
+
+<script>
+    const cell = document.getElementById("cell");
+    if (cell.innerText.length > 10) {
+        cell.innerText="........";
+    }
+</script>

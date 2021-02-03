@@ -1,0 +1,9 @@
+﻿#cell {
+    height: 40px;
+    transition: height 1s ease-in;
+    overflow: hidden;
+}
+
+   #cell:hover {
+        height: 100px;
+    }

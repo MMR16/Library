@@ -64,6 +64,10 @@
                     <div class="col-7">
                         <input type="file" accept="image/*" asp-for="Product.ProImage" id="uploadbox" alt="Product Image" multiple class="form-control" />
                     </div>
+                    @if (ViewBag.ImageError is not null)
+                    {
+                    <div class="col-3"><span class="text-danger">@ViewBag.ImageError</span></div>
+                    }
                 </div>
 
                 @*SelectListItem + ViewBag*@
@@ -108,7 +112,7 @@
                             }
                         </div>
                         <div class="col">
-                            <a asp-controller="Product" asp-action="index" class="btn btn-dark"><i class="fa fa-backward">&nbsp;</i> Back To Categries</a>
+                            <a asp-controller="Product" asp-action="index" class="btn btn-dark"><i class="fa fa-backward">&nbsp;</i> Back To Products</a>
                         </div>
                     </div>
 
@@ -128,10 +132,22 @@
         $(document).ready(
             function () {
                 $('#summernote').summernote({
-                    height: 250
+                    toolbar: [
+                        // [groupName, [list of button]]
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                        ['fontsize', ['fontsize']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['height', ['height']]
+                    ],
+                    height: 250,
+                    spellCheck: true,
+                    disableGrammar: false
                 });
             }
         )
+
         function validateInput() {
             if (document.getElementById("uploadbox").value == "") {
                 swal.fire(

@@ -101,30 +101,53 @@ namespace Library.Controllers
         public IActionResult UpdCreate(ProductViewModel productVM)
         {
             if (ModelState.IsValid)
-           
             {
-                var files = HttpContext.Request.Form.Files;
-                string webrootbath = webHostEnvironment.WebRootPath;
                 if (productVM.Product.ProId == 0)
                 {
-                    string upload = webrootbath + WC.ImagePath;
-                    //string filename = Path.GetFileName(files[0].FileName); //to get image name
-                    string filename = Guid.NewGuid().ToString(); // to create guid image name to avoid duplication errors
-                    string extention = Path.GetExtension(files[0].FileName);
-                    using (var filestream = new FileStream(Path.Combine(upload, filename + extention), FileMode.Create))
+                    var files = HttpContext.Request.Form.Files;
+                    if (files.Count is not 1)
                     {
-                        files[0].CopyTo(filestream);
+                        ViewBag.ImageError = "Please Upload one Image only";
                     }
-                    productVM.Product.ProImage = filename + extention;
-                    Db.Products.Add(productVM.Product);
-                    Db.SaveChanges();
+                    else
+                    {
+                        string extention = Path.GetExtension(files[0].FileName);
+                        if (Path.HasExtension(extention))
+                        {
+                            //for vaildate image by the type "image"
+                            //better than extentions beccause i onky know about 5 extention of images
+                            string image_type = string.Join("", files[0].ContentType.Take(5)).ToLower();
+
+                            if (image_type == "image")
+                            {
+                                string webrootbath = webHostEnvironment.WebRootPath;
+                                string upload = webrootbath + WC.ImagePath;
+                                //string filename = Path.GetFileName(files[0].FileName); //to get uploaded image name
+                                string filename = Guid.NewGuid().ToString(); // to create guid image name to avoid duplication errors
+                                using (var filestream = new FileStream(Path.Combine(upload, filename + extention), FileMode.Create))
+                                {
+                                    files[0].CopyTo(filestream);
+                                }
+                                productVM.Product.ProImage = filename + extention;
+                                Db.Products.Add(productVM.Product);
+                                Db.SaveChanges();
+                                return RedirectToAction(nameof(Index));
+                            }
+                        }
+                            ViewBag.ImageError = "Please Upload Proper Image";
+                    }
                 }
 
-                return RedirectToAction(nameof(Index));
             }
+            productVM.CategorySelectList = Db.Categories.Select(q => new SelectListItem
+            {
+                Text = q.CatName,
+                Value = q.CatId.ToString()
+            });
             return View(productVM);
         }
 
 
     }
 }
+

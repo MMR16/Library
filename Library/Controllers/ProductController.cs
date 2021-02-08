@@ -100,14 +100,26 @@ namespace Library.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UpdCreate(ProductViewModel productVM)
         {
+            void CateList()
+            {
+                productVM.CategorySelectList = Db.Categories.Select(q => new SelectListItem
+                {
+                    Text = q.CatName,
+                    Value = q.CatId.ToString()
+                });
+            }
             if (ModelState.IsValid)
             {
+                var files = HttpContext.Request.Form.Files;
+                //Function to CategoryListItem
+                //create
                 if (productVM.Product.ProId == 0)
                 {
-                    var files = HttpContext.Request.Form.Files;
                     if (files.Count is not 1)
                     {
-                        ViewBag.ImageError = "Please Upload one Image only";
+                        ViewBag.ImageError = "Please Upload one Image only don't think you'r so smart";
+                        CateList();
+                        return View(productVM);
                     }
                     else
                     {
@@ -134,20 +146,114 @@ namespace Library.Controllers
                                 return RedirectToAction(nameof(Index));
                             }
                         }
-                            ViewBag.ImageError = "Please Upload Proper Image";
+                        ViewBag.ImageError = "Please Upload Proper Image";
+                        CateList();
+                        return View(productVM);
                     }
-                }
 
+                }
+                //edit
+                else
+                {
+                    //disable tracking //new feature
+                    var proDB = Db.Products.AsNoTracking().FirstOrDefault(q => q.ProId == productVM.Product.ProId);
+                    if (files.Count > 1)
+                    {
+                        ViewBag.ImageError = "Please Upload one Image only don't think you'r so smart";
+                        CateList();
+                        return View(productVM);
+                    }
+                    else if (files.Count is 1)
+                    {
+                        string extention = Path.GetExtension(files[0].FileName);
+                        if (Path.HasExtension(extention))
+                        {
+                            string image_type = string.Join("", files[0].ContentType.Take(5)).ToLower();
+
+                            if (image_type == "image")
+                            {
+                                string webrootbath = webHostEnvironment.WebRootPath;
+                                string upload = webrootbath + WC.ImagePath;
+
+                                string newfile = Guid.NewGuid().ToString(); // to create guid image name to avoid duplication errors
+
+                                var oldfile = Path.Combine(upload, proDB.ProImage);
+                                //deleting old file
+                                if (System.IO.File.Exists(oldfile))
+                                {
+                                    System.IO.File.Delete(oldfile);
+                                }
+                                //addinf new file
+                                using (var filestream = new FileStream(Path.Combine(upload, newfile + extention), FileMode.Create))
+                                {
+                                    files[0].CopyTo(filestream);
+                                }
+                                //changing file name in database
+                                productVM.Product.ProImage = newfile + extention;
+                            }
+                            else
+                            {
+                                ViewBag.ImageError = "Please Upload Proper Image";
+                                CateList();
+                                return View(productVM);
+                            }
+                        }
+                        else
+                        {
+                            ViewBag.ImageError = "Please Upload Proper Image";
+                            CateList();
+                            return View(productVM);
+                        }
+                    }
+
+                    else
+                    {
+                        productVM.Product.ProImage = proDB.ProImage;
+                    }
+                    Db.Products.Update(productVM.Product);
+                    Db.SaveChanges();
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            productVM.CategorySelectList = Db.Categories.Select(q => new SelectListItem
-            {
-                Text = q.CatName,
-                Value = q.CatId.ToString()
-            });
+            CateList();
             return View(productVM);
         }
 
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id is null)
+            {
+                return BadRequest();
+            }
+            var pro = Db.Products.Any(q => q.ProId == id);
+            if (pro)
+            {
+                var product = Db.Products.Include(q => q.Category).FirstOrDefault(q => q.ProId == id);
+                return View(product);
+            }
+            return NotFound();
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName(nameof(Delete))]
+        public IActionResult DeleteConfirm(int? id)
+        {
+            if (id is null)
+            {
+                return BadRequest();
+            }
+            var pro = Db.Products.Any(q => q.ProId == id);
+            if (pro)
+            {
+                var product = Db.Products.Find(id);
+                Db.Remove(product);
+                Db.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            return NotFound();
+        }
     }
 }
 

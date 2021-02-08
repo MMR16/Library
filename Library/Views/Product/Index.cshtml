@@ -5,15 +5,15 @@
 
 <div class="container p-3">
 
-    <div class="row pt-4">
+    <div class="row">
         @if (Model.Count() > 0)
         {
-            <div class="col-6"><h1 class="text-primary"> Product List</h1></div>
-            <div class="col-6 text-right"><h2>you have: "<a style="color:brown;">@Model.Count()</a>" Product </h2></div>
+            <div class="col-sm "><h1 class="text-primary"> Product List</h1></div>
+            <div class="col-sm text-right"><h2>you have: "<a style="color:brown;">@Model.Count()</a>" Product </h2></div>
         }
         else
         {
-            <div class="col-6"><h1 class="text-primary"> Product List</h1></div>
+            <div class="col-sm"><h1 class="text-primary"> Product List</h1></div>
         }
     </div>
 
@@ -28,10 +28,11 @@
         <table class=" table table-bordered table-hover text-center">
             <thead>
                 <tr>
+                    <th>@Html.DisplayNameFor(w=>w.ProImage)</th>
                     <th>@Html.DisplayNameFor(w => w.ProName)</th>
                     <th>@Html.DisplayNameFor(w => w.ProPrice)</th>
                     <th>@Html.DisplayNameFor(w => w.ProDescription)</th>
-                    <th>@Html.DisplayNameFor(w => w.Category.CatName)</th>
+                    <th>@Html.DisplayNameFor(w => w.CatId)</th>
 
 
                     <th>Operations</th>
@@ -40,25 +41,23 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
+                    <tr >
+                        <td><img src="@WC.ImagePath@item.ProImage" style="width:4rem; height:4rem; border-radius:50%" alt="product Icon" /></td>
                         <td>@Html.DisplayFor(q => item.ProName)</td>
                         <td>@Html.DisplayFor(q => item.ProPrice)</td>
-                        <td id="cell" style="word-wrap: break-word;min-width: 160px;max-width: 160px;"> @Html.Raw(item.ProDescription)</td>
+                        <td id="aa" class="cell" style="word-wrap: break-word;min-width: 160px;max-width: 160px;"> @Html.Raw(item.ProDescription)</td>
                         <td>@Html.DisplayFor(q => item.Category.CatName)</td>
-
 
                         <td>
                             <div class="w-75 btn-group" role="group">
-                                <a asp-action="UpdCreate" asp-route-Id="@item.ProId" class="btn btn-primary mx-2 "><i class="fa fa-edit"> &nbsp; </i>Edit</a>
-                                <a asp-action="Delete" asp-route-Id="@item.ProId" class="btn btn-danger mx-2"><i class="fa fa-trash"> &nbsp; </i>Delete</a>
+                                <a asp-action="UpdCreate" asp-route-Id="@item.ProId" class="btn btn-primary mx-2 "><i class="fa fa-edit"> &nbsp; </i></a>
+                                <a asp-action="Delete" asp-route-Id="@item.ProId" class="btn btn-danger mx-2"><i class="fa fa-trash"> &nbsp; </i></a>
                             </div>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
-
-
     }
     else
     {
@@ -66,9 +65,18 @@
     }
 </div>
 
+
 <script>
-    const cell = document.getElementById("cell");
-    if (cell.innerText.length > 10) {
-        cell.innerText="........";
+    const cell = document.getElementsByClassName("cell"); //array of cell
+    for (let i = 0; i < cell.length; i++) {
+        if (cell[i].innerText.length > 40) {
+            const length = 40;
+            let content = cell[i].innerText.substring(0, length);
+            cell[i].innerText = content + "......";
+            cell[i].style.fontSize = "initial";
+            cell[i].style.fontSizeAdjust = "0.1";
+            cell[i].style.height = "auto";
+
+        }
     }
 </script>

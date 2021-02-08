@@ -1,29 +1,35 @@
 ﻿@model ProductViewModel
 @{
     ViewData["Title"] = "Create";
+    var Create = "Add Product";
+    string s = Model.Product.ProImage is not null ? (WC.ImagePath + Model.Product.ProImage) : $"{WC.ImagePath}Product.svg";
+    var Edit = "Edit Product";
+
 }
 
 
 <form asp-action="UpdCreate" enctype="multipart/form-data">
-    <div class="border p-3">
-        @if (Model.Product.ProId != 0)
-        {
-            @Html.AntiForgeryToken()
-            <input asp-for="Product.ProId" hidden />
-            ViewData["Title"] = "Edit";
-            <div class="form-group row">
-                <h2 class="text-info pl-3">Update Product</h2>
-            </div>
-        }
-        else
-        {
-            <div class="form-group row">
-                <h2 class="text-info pl-3">Add Category</h2>
-            </div>
-        }
+    @Html.AntiForgeryToken()
+    @if (Model.Product.ProId != 0)
+    {
+        <input asp-for="Product.ProId" hidden />
+        ViewData["Title"] = "Edit";
+        <div class="form-group row">
+            <h2 class="text-info pl-3">@Edit</h2>
+        </div>
 
+    }
+    else
+    {
+        <div class="form-group row">
+            <h2 class="text-info pl-3">@Create</h2>
+        </div>
+    }
+
+    <div class="border p-3">
         <div class="row">
             <div class="col-12">
+
                 <div class="form-group row">
                     <div class="col-2">
                         <label asp-for="Product.ProName"></label>
@@ -56,17 +62,18 @@
                     <div class="col-3"><span asp-validation-for="Product.ProDescription" class="text-danger"></span></div>
                 </div>
 
+                <div class="form-group row justify-content-center"><img src=@s style="width:22rem; height:22rem; border-radius:5%;" alt="Product Image" /></div>
 
                 <div class="form-group row">
                     <div class="col-2">
                         <label asp-for="Product.ProImage"></label>
                     </div>
                     <div class="col-7">
-                        <input type="file" accept="image/*" asp-for="Product.ProImage" id="uploadbox" alt="Product Image" multiple class="form-control" />
+                        <input type="file" accept="image/*" asp-for="Product.ProImage" id="uploadbox" alt="Product Image" class="form-control" />
                     </div>
                     @if (ViewBag.ImageError is not null)
                     {
-                    <div class="col-3"><span class="text-danger">@ViewBag.ImageError</span></div>
+                        <div class="col-3"><span class="text-danger">@ViewBag.ImageError</span></div>
                     }
                 </div>
 
@@ -117,11 +124,13 @@
                     </div>
 
                 </div>
-            </div>
-        </div>
-    </div>
-    <div asp-validation-summary="All" class="text-danger"></div>
 
+            </div>
+
+        </div>
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+    </div>
 </form>
 
 @section Scripts{
@@ -135,10 +144,10 @@
                     toolbar: [
                         // [groupName, [list of button]]
                         ['style', ['bold', 'italic', 'underline', 'clear']],
-                        ['font', ['strikethrough', 'superscript', 'subscript']],
-                        ['fontsize', ['fontsize']],
+                        //['font', ['strikethrough', 'superscript', 'subscript']],
+                        //['fontsize', ['fontsize']],
                         ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
+                        //['para', ['ul', 'ol', 'paragraph']],
                         ['height', ['height']]
                     ],
                     height: 250,
@@ -157,5 +166,16 @@
             }
             return true;
         }
+
+        //live image preview
+        const inputfile = document.getElementById("uploadbox");
+        inputfile.addEventListener("change", (e) => {
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+                const image = document.getElementsByTagName("img")[0];
+                image.src = reader.result;
+            })
+            reader.readAsDataURL(e.target.files[0])
+        })
     </script>
 }

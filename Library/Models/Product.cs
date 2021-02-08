@@ -15,23 +15,24 @@ namespace Library.Models
 
         [Required(ErrorMessage ="You Must Enter Product Name")]
         [StringLength(maximumLength:50,MinimumLength =3,ErrorMessage ="Product Name Must Be Between 3 & 50 Letters")]
-        [Display(Name ="Product Name")]
+        [Display(Name ="Name")]
         public string ProName { get; set; }
 
         [StringLength(maximumLength:int.MaxValue,MinimumLength =5,ErrorMessage ="Description Must Be More Than 5 Letters")]
         [DataType(DataType.MultilineText)]
-        [DisplayName("Product Description")]
+        [DisplayName("Description")]
         public string ProDescription { get; set; }
 
         [Range(1,100_000,ErrorMessage ="Price Range Must Be 1 ~ 100,000")]
-        [Display(Name ="Product Price")]
+        [Display(Name ="Price")]
         public double  ProPrice { get; set; }
 
-        [DisplayName("Product Image")]
+        [DisplayName("Image")]
         public string ProImage { get; set; }
 
         [ForeignKey("Category")]
         [Required(ErrorMessage = "Please Choose A Category")]
+        [Display(Name = "Category")]
         public int CatId { get; set; }
 
         public virtual Category Category { get; set; }

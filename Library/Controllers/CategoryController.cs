@@ -1,5 +1,6 @@
 ﻿using Library.Data;
 using Library.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,12 @@ namespace Library.Controllers
 {
     public class CategoryController : Controller
     {
-       private readonly ApplicationDBContext Db;
-
-        public CategoryController(ApplicationDBContext _Db)
+        private readonly ApplicationDBContext Db;
+        private readonly IWebHostEnvironment IWebHostEnvironment;
+        public CategoryController(ApplicationDBContext _Db, IWebHostEnvironment _IWebHostEnvironment)
         {
-             Db= _Db;
+            Db = _Db;
+            IWebHostEnvironment = _IWebHostEnvironment;
         }
 
         public IActionResult Index()
@@ -50,7 +52,7 @@ namespace Library.Controllers
                 return BadRequest();
             }
             bool id = Db.Categories.Any(q => q.CatId == Id);
-             if (id is false)
+            if (id is false)
             {
                 return NotFound();
             }
@@ -103,6 +105,16 @@ namespace Library.Controllers
                 return NotFound();
             }
             var Obj = Db.Categories.Find(Id);
+            var pro = Db.Products.Where(q => q.CatId == Obj.CatId).ToList();
+            if (pro is not null)
+            {
+                foreach (var item in pro)
+                {
+                    var ImageName = item.ProImage.ToString();
+                    string OldImage = IWebHostEnvironment.WebRootPath + WC.ImagePath + ImageName;
+                    System.IO.File.Delete(OldImage);
+                }
+            }
             Db.Categories.Remove(Obj);
             Db.SaveChanges();
             return RedirectToAction(nameof(Index));

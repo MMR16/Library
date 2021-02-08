@@ -248,6 +248,13 @@ namespace Library.Controllers
             if (pro)
             {
                 var product = Db.Products.Find(id);
+                //deleting Product image
+                //getting image
+                var ImageName = product.ProImage.ToString();
+                string OldImage = webHostEnvironment.WebRootPath + WC.ImagePath + ImageName;
+                System.IO.File.Delete(OldImage);
+
+                //deleting from database
                 Db.Remove(product);
                 Db.SaveChanges();
                 return RedirectToAction(nameof(Index));

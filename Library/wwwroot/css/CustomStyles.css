@@ -1,4 +1,4 @@
-﻿.cell {
+﻿/*.cell {
     height: 100px;
     transition: height 1s ease-in;
     overflow: hidden;
@@ -7,3 +7,4 @@
    .cell:hover {
         height: 600px;
     }
+*/

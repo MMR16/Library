@@ -50,6 +50,30 @@
                     <div class="col-3"><span asp-validation-for="Product.ProPrice" class="text-danger"></span></div>
                 </div>
 
+                @*Currency*@
+                <div class="form-group row">
+                    <div class="col-2">
+                        <label> Choose Currency</label>
+                    </div>
+                    <div class="col-7">
+                        <select asp-for="Product.Currencies" asp-items="Html.GetEnumSelectList<Currency>()" class="form-control">
+                            @*<option disabled selected >@Library.Models.Currency.EGP</option>*@
+                        </select>
+                    </div>
+                    <div class="col-3"><span asp-validation-for="Product.Currencies" class="text-danger"></span></div>
+                </div>
+
+
+                <div class="form-group row">
+                    <div class="col-2">
+                        <label asp-for="Product.ProShortDescription"></label>
+                    </div>
+                    <div class="col-7">
+                       <input asp-for="Product.ProShortDescription" class="form-control">
+                    </div>
+                    <div class="col-3"><span asp-validation-for="Product.ProShortDescription" class="text-danger"></span></div>
+                </div>
+
                 <div class="form-group row">
                     <div class="col-2">
                         <label asp-for="Product.ProDescription"></label>
@@ -80,17 +104,17 @@
                 @*SelectListItem + ViewBag*@
 
                 @*
-                    <div class="form-group row">
-                        <div class="col-3">
-                            <label> Choose Category</label>
-                        </div>
-                        <div class="col-5">
-                            <select asp-for="Product.Category.CatId" asp-items="@ViewBag.CategoryDropDown" class="form-control">
-                                <option disabled selected>Select Category</option>
-                            </select>
-                        </div>
-                        <div class="col-4"><span asp-validation-for="Product.Category.CatId" class="text-danger"></span></div>
-                    </div>
+        <div class="form-group row">
+            <div class="col-3">
+                <label> Choose Category</label>
+            </div>
+            <div class="col-5">
+                <select asp-for="Product.Category.CatId" asp-items="@ViewBag.CategoryDropDown" class="form-control">
+                    <option disabled selected>Select Category</option>
+                </select>
+            </div>
+            <div class="col-4"><span asp-validation-for="Product.Category.CatId" class="text-danger"></span></div>
+        </div>
                 *@
 
                 <div class="form-group row">
@@ -104,6 +128,20 @@
                     </div>
                     <div class="col-3"><span asp-validation-for="Product.CatId" class="text-danger"></span></div>
                 </div>
+
+
+                <div class="form-group row">
+                    <div class="col-2">
+                        <label> Choose AppType</label>
+                    </div>
+                    <div class="col-7">
+                        <select asp-for="Product.TypeId" asp-items="@Model.AppSelectList" class="form-control">
+                            <option disabled selected>Select Category</option>
+                        </select>
+                    </div>
+                    <div class="col-3"><span asp-validation-for="Product.TypeId" class="text-danger"></span></div>
+                </div>
+
 
 
                 <div class="form-group row">

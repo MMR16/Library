@@ -28,11 +28,13 @@
         <table class=" table table-bordered table-hover text-center">
             <thead>
                 <tr>
-                    <th>@Html.DisplayNameFor(w=>w.ProImage)</th>
+                    <th>@Html.DisplayNameFor(w => w.ProImage)</th>
                     <th>@Html.DisplayNameFor(w => w.ProName)</th>
                     <th>@Html.DisplayNameFor(w => w.ProPrice)</th>
                     <th>@Html.DisplayNameFor(w => w.ProDescription)</th>
                     <th>@Html.DisplayNameFor(w => w.CatId)</th>
+                    <th>@Html.DisplayNameFor(w => w.TypeId)</th>
+
 
 
                     <th>Operations</th>
@@ -41,12 +43,13 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr >
+                    <tr>
                         <td><img src="@WC.ImagePath@item.ProImage" style="width:4rem; height:4rem; border-radius:50%" alt="product Icon" /></td>
                         <td>@Html.DisplayFor(q => item.ProName)</td>
                         <td>@Html.DisplayFor(q => item.ProPrice)</td>
                         <td id="aa" class="cell" style="word-wrap: break-word;min-width: 160px;max-width: 160px;"> @Html.Raw(item.ProDescription)</td>
                         <td>@Html.DisplayFor(q => item.Category.CatName)</td>
+                        <td>@Html.DisplayFor(q => item.AppType.TypeName)</td>
 
                         <td>
                             <div class="w-75 btn-group" role="group">
@@ -65,12 +68,13 @@
     }
 </div>
 
+@section Scripts{ 
 
 <script>
     const cell = document.getElementsByClassName("cell"); //array of cell
     for (let i = 0; i < cell.length; i++) {
-        if (cell[i].innerText.length > 40) {
-            const length = 40;
+        const length = 40;
+        if (cell[i].innerText.length > length) {
             let content = cell[i].innerText.substring(0, length);
             cell[i].innerText = content + "......";
             cell[i].style.fontSize = "initial";
@@ -80,3 +84,4 @@
         }
     }
 </script>
+}

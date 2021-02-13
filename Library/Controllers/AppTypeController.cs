@@ -6,21 +6,24 @@ using System.Threading.Tasks;
 using Library.Data;
 using Library.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Library.Controllers
 {
-    public class ProTypeController : Controller
+    public class AppTypeController : Controller
     {
         private readonly ApplicationDBContext Db;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
-        public ProTypeController(ApplicationDBContext _Db)
+        public AppTypeController(ApplicationDBContext _Db, IWebHostEnvironment _webHostEnvironment)
         {
             Db = _Db;
+            webHostEnvironment = _webHostEnvironment;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var Types = Db.ProTypes.ToList();
+            var Types =await Db.AppTypes.ToListAsync();
             return View(Types);
         }
 
@@ -32,7 +35,7 @@ namespace Library.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ProType T)
+        public IActionResult Create(AppType T)
         {
             if (ModelState.IsValid)
             {
@@ -50,18 +53,18 @@ namespace Library.Controllers
             {
                 return BadRequest();
             }
-            var id = Db.ProTypes.Any(q => q.TypeId == Id);
+            var id = Db.AppTypes.Any(q => q.TypeId == Id);
             if (id is false)
             {
                 return NotFound();
             }
-            var PType = Db.ProTypes.Find(Id);
-            return View(PType);
+            var AppType = Db.AppTypes.Find(Id);
+            return View(AppType);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(ProType T)
+        public IActionResult Edit(AppType T)
         {
             if (ModelState.IsValid)
             {
@@ -79,13 +82,13 @@ namespace Library.Controllers
             {
                 return BadRequest();
             }
-            var id = Db.ProTypes.Any(q => q.TypeId == Id);
+            var id = Db.AppTypes.Any(q => q.TypeId == Id);
             if (id is false)
             {
                 return NotFound();
             }
-            var PType = Db.ProTypes.Find(Id);
-            return View(PType);
+            var AppType = Db.AppTypes.Find(Id);
+            return View(AppType);
         }
 
         [HttpPost]
@@ -97,13 +100,25 @@ namespace Library.Controllers
             {
                 return BadRequest();
             }
-            var id = Db.ProTypes.Any(q => q.TypeId == Id);
+            var id = Db.AppTypes.Any(q => q.TypeId == Id);
             if (id is false)
             {
                 return NotFound();
             }
-            var PType =Db.ProTypes.Find(Id);
-            Db.ProTypes.Remove(PType);
+            var AppType = Db.AppTypes.Find(Id);
+
+            var pro = Db.Products.Where(q => q.TypeId == AppType.TypeId).ToList();
+            if (pro is not null)
+            {
+                foreach (var item in pro)
+                {
+                    var ImageName = item.ProImage.ToString();
+                    string OldImage = webHostEnvironment.WebRootPath + WC.ImagePath + ImageName;
+                    System.IO.File.Delete(OldImage);
+                }
+            }
+
+            Db.AppTypes.Remove(AppType);
             Db.SaveChanges();
             return RedirectToAction(nameof(Index));
         }

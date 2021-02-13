@@ -7,6 +7,19 @@ namespace Library.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AppTypes",
+                columns: table => new
+                {
+                    TypeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TypeName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppTypes", x => x.TypeId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -21,19 +34,6 @@ namespace Library.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProTypes",
-                columns: table => new
-                {
-                    TypeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TypeName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProTypes", x => x.TypeId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -43,11 +43,18 @@ namespace Library.Migrations
                     ProDescription = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: true),
                     ProPrice = table.Column<double>(type: "float", nullable: false),
                     ProImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CatId = table.Column<int>(type: "int", nullable: false)
+                    CatId = table.Column<int>(type: "int", nullable: false),
+                    TypeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.ProId);
+                    table.ForeignKey(
+                        name: "FK_Products_AppTypes_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "AppTypes",
+                        principalColumn: "TypeId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Products_Categories_CatId",
                         column: x => x.CatId,
@@ -60,6 +67,11 @@ namespace Library.Migrations
                 name: "IX_Products_CatId",
                 table: "Products",
                 column: "CatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_TypeId",
+                table: "Products",
+                column: "TypeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -68,7 +80,7 @@ namespace Library.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "ProTypes");
+                name: "AppTypes");
 
             migrationBuilder.DropTable(
                 name: "Categories");

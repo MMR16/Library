@@ -1,0 +1,30 @@
+﻿@model Product
+
+<div class="col-lg-4 col-md-6 pb-4">
+
+    <div class="card bg-white rounded shadow-sm border-dark">
+        <div class="card-body px-3 pb-3 row">
+            <div class="col-7 "><h5 class="float-left">@Model.ProName</h5></div>
+            <div class="col-5"><label class="float-right"><span class="text-info h5">@Model.ProPrice</span>/@Model.Currencies</label></div>
+        </div>
+
+        <img class="card-img-top" src="@WC.ImagePath@Model.ProImage" style="width:100%;height:15rem;" alt="@Model.ProName Image">
+
+        <div class="card-body p-1 px-3 row border-dark">
+            <div class="col-6">
+                <span class="badge p-2 border w-100" style="background-color:azure;">@Model.Category.CatName</span>
+            </div>
+
+            <div class="col-6 border-0">
+                <span class="badge p-2 border w-100" style="background-color:antiquewhite;">@Model.AppType.TypeName</span>
+            </div>
+
+            <div class="col-12 pt-2">
+                <p >@Model.ProShortDescription </p>
+                <a class="btn btn-dark form-control btn-sm p-2" asp-action="Details" asp-route-id="@Model.ProId"> More Details</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+

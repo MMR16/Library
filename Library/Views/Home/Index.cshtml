@@ -1,8 +1,29 @@
-﻿@{
+﻿@model HomeViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@if (Model.products.Count() < 1)
+{
+    <h1 class="text-danger">There Is No Products</h1>
+}
+else { 
+
+<div class="container">
+    <div>
+        <button class="btn btn-dark filter-button" data-filter="all">All</button>
+        @foreach (var item in Model.categories)
+        {
+            <button class="btn btn-outline-secondary " data-filter="@item.CatName.Replace(" ","_")">@item.CatName</button>
+        }
+    </div>
+    <br />
+    <div class="row">
+        @foreach (var item in Model.products)
+        {
+            <partial name="_ProductCard" model="item" />
+        }
+    </div>
+
 </div>
+}

@@ -3,14 +3,16 @@ using Library.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Library.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210212093655_v01")]
+    partial class v01
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,9 +67,6 @@ namespace Library.Migrations
                     b.Property<int>("CatId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Currencies")
-                        .HasColumnType("int");
-
                     b.Property<string>("ProDescription")
                         .HasMaxLength(2147483647)
                         .HasColumnType("nvarchar(max)");
@@ -82,11 +81,6 @@ namespace Library.Migrations
 
                     b.Property<double>("ProPrice")
                         .HasColumnType("float");
-
-                    b.Property<string>("ProShortDescription")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
 
                     b.Property<int>("TypeId")
                         .HasColumnType("int");

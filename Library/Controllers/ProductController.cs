@@ -26,7 +26,7 @@ namespace Library.Controllers
 
         public IActionResult Index()
         {
-            var Products = Db.Products.Include(w => w.Category).ToList();
+            var Products = Db.Products.Include(w => w.Category).Include(q => q.AppType).ToList();
             return View(Products);
         }
 
@@ -34,7 +34,7 @@ namespace Library.Controllers
         [HttpGet]
         public IActionResult UpdCreate(int? Id)
         {
-            //SelectListItem new In .NET Core insted of SelectList & More Better
+            //SelectListItem new In .NET Core insted of SelectList & More Better Than SelectList
 
             ProductViewModel productVM = new ProductViewModel()
             {
@@ -44,6 +44,11 @@ namespace Library.Controllers
                     Text = q.CatName,
                     Value = q.CatId.ToString()
 
+                }),
+                AppSelectList = Db.AppTypes.Select(q => new SelectListItem
+                {
+                    Text = q.TypeName,
+                    Value = q.TypeId.ToString()
                 })
             };
 
@@ -108,6 +113,14 @@ namespace Library.Controllers
                     Value = q.CatId.ToString()
                 });
             }
+            void AppTypeList()
+            {
+                productVM.AppSelectList = Db.AppTypes.Select(q => new SelectListItem
+                {
+                    Text = q.TypeName,
+                    Value = q.TypeId.ToString()
+                });
+            }
             if (ModelState.IsValid)
             {
                 var files = HttpContext.Request.Form.Files;
@@ -119,6 +132,7 @@ namespace Library.Controllers
                     {
                         ViewBag.ImageError = "Please Upload one Image only don't think you'r so smart";
                         CateList();
+                        AppTypeList();
                         return View(productVM);
                     }
                     else
@@ -148,6 +162,7 @@ namespace Library.Controllers
                         }
                         ViewBag.ImageError = "Please Upload Proper Image";
                         CateList();
+                        AppTypeList();
                         return View(productVM);
                     }
 
@@ -161,6 +176,7 @@ namespace Library.Controllers
                     {
                         ViewBag.ImageError = "Please Upload one Image only don't think you'r so smart";
                         CateList();
+                        AppTypeList();
                         return View(productVM);
                     }
                     else if (files.Count is 1)
@@ -195,6 +211,7 @@ namespace Library.Controllers
                             {
                                 ViewBag.ImageError = "Please Upload Proper Image";
                                 CateList();
+                                AppTypeList();
                                 return View(productVM);
                             }
                         }
@@ -202,6 +219,7 @@ namespace Library.Controllers
                         {
                             ViewBag.ImageError = "Please Upload Proper Image";
                             CateList();
+                            AppTypeList();
                             return View(productVM);
                         }
                     }
@@ -216,6 +234,7 @@ namespace Library.Controllers
                 }
             }
             CateList();
+            AppTypeList();
             return View(productVM);
         }
 
@@ -229,7 +248,7 @@ namespace Library.Controllers
             var pro = Db.Products.Any(q => q.ProId == id);
             if (pro)
             {
-                var product = Db.Products.Include(q => q.Category).FirstOrDefault(q => q.ProId == id);
+                var product = Db.Products.Include(q => q.Category).Include(q=>q.AppType).FirstOrDefault(q => q.ProId == id);
                 return View(product);
             }
             return NotFound();

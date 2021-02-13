@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20210131170600_v01")]
-    partial class v01
+    [Migration("20210213054931_Add_ShortDesc")]
+    partial class Add_ShortDesc
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,6 +19,23 @@ namespace Library.Migrations
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.1");
+
+            modelBuilder.Entity("Library.Models.AppType", b =>
+                {
+                    b.Property<int>("TypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("TypeId");
+
+                    b.ToTable("AppTypes");
+                });
 
             modelBuilder.Entity("Library.Models.Category", b =>
                 {
@@ -40,23 +57,6 @@ namespace Library.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("Library.Models.ProType", b =>
-                {
-                    b.Property<int>("TypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("TypeName")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.HasKey("TypeId");
-
-                    b.ToTable("ProTypes");
-                });
-
             modelBuilder.Entity("Library.Models.Product", b =>
                 {
                     b.Property<int>("ProId")
@@ -65,6 +65,9 @@ namespace Library.Migrations
                         .UseIdentityColumn();
 
                     b.Property<int>("CatId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Currencies")
                         .HasColumnType("int");
 
                     b.Property<string>("ProDescription")
@@ -82,9 +85,19 @@ namespace Library.Migrations
                     b.Property<double>("ProPrice")
                         .HasColumnType("float");
 
+                    b.Property<string>("ProShortDescription")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<int>("TypeId")
+                        .HasColumnType("int");
+
                     b.HasKey("ProId");
 
                     b.HasIndex("CatId");
+
+                    b.HasIndex("TypeId");
 
                     b.ToTable("Products");
                 });
@@ -97,7 +110,20 @@ namespace Library.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Library.Models.AppType", "AppType")
+                        .WithMany("Products")
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppType");
+
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Library.Models.AppType", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Library.Models.Category", b =>

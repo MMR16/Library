@@ -12,11 +12,11 @@ namespace Library.Controllers
     public class CategoryController : Controller
     {
         private readonly ApplicationDBContext Db;
-        private readonly IWebHostEnvironment IWebHostEnvironment;
-        public CategoryController(ApplicationDBContext _Db, IWebHostEnvironment _IWebHostEnvironment)
+        private readonly IWebHostEnvironment webHostEnvironment;
+        public CategoryController(ApplicationDBContext _Db, IWebHostEnvironment _webHostEnvironment)
         {
             Db = _Db;
-            IWebHostEnvironment = _IWebHostEnvironment;
+            webHostEnvironment = _webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -111,7 +111,7 @@ namespace Library.Controllers
                 foreach (var item in pro)
                 {
                     var ImageName = item.ProImage.ToString();
-                    string OldImage = IWebHostEnvironment.WebRootPath + WC.ImagePath + ImageName;
+                    string OldImage = webHostEnvironment.WebRootPath + WC.ImagePath + ImageName;
                     System.IO.File.Delete(OldImage);
                 }
             }

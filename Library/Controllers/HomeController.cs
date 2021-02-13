@@ -1,5 +1,8 @@
-﻿using Library.Models;
+﻿using Library.Data;
+using Library.Models;
+using Library.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,15 +15,23 @@ namespace Library.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDBContext Db;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDBContext _DB)
         {
             _logger = logger;
+            Db = _DB;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            HomeViewModel home = new HomeViewModel()
+            {
+                products = Db.Products.Include(q=>q.Category).Include(w=>w.AppType).ToList(),
+                categories = Db.Categories.Include(q => q.Products).ToList()
+            };
+            return View(home);
         }
 
         public IActionResult Privacy()

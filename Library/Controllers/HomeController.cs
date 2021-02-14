@@ -34,6 +34,25 @@ namespace Library.Controllers
             return View(home);
         }
 
+        public IActionResult Details(int? id)
+        {
+            if (id is null)
+            {
+                return BadRequest();
+            }
+            var exist = Db.Products.Any(q=>q.ProId ==id);
+            if (exist)
+            {
+                var product = new DetailsViewModel()
+                {
+                    product = Db.Products.Include(q => q.Category).Include(a => a.AppType).FirstOrDefault(q => q.ProId == id),
+                    ExistsInCard = false
+                };
+                return View(product);
+            }
+            return NotFound();
+        }
+
         public IActionResult Privacy()
         {
             return View();

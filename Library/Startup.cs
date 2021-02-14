@@ -28,6 +28,14 @@ namespace Library
             services.AddControllersWithViews();
             services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(
                 Configuration.GetConnectionString("DefaultConnection")));
+            //session
+            services.AddHttpContextAccessor();
+            services.AddSession(q=> {
+                q.IdleTimeout = TimeSpan.FromMinutes(10);
+                q.Cookie.HttpOnly = true;
+                q.Cookie.IsEssential = true;
+                });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +57,8 @@ namespace Library
             app.UseRouting();
 
             app.UseAuthorization();
+            //session
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

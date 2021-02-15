@@ -4,7 +4,9 @@
 }
 
 <div class="">
-    <form method="post">
+    <form method="post" asp-action="Details" asp-controller="Home">
+        @Html.AntiForgeryToken()
+        <input asp-for="product.ProId" hidden/>
         <div class="container">
 
             <div class="card border-dark">
@@ -12,8 +14,6 @@
                     <div class="col-12 col-md-6"><h2 class="text-white">@Model.product.ProName</h2></div>
                     <div class="col-12 col-md-6 text-md-right"><h2 class="text-warning">@Model.product.ProPrice/@Model.product.Currencies</h2></div>
                 </div>
-
-
 
                 <div class="card-body">
                     <div class="container rounded p-2">
@@ -35,18 +35,23 @@
                     </div>
                 </div>
 
-
                 <div class="card-footer bg-dark border-dark">
                     <div class="row">
                         <div class="col-12 col-md-6 pb-1">
                             <a class="btn btn-secondary form-control btn-lg" asp-action="Index" asp-controller="home"><i class="fa fa-backward">&nbsp;</i>Back To Home</a>
                         </div>
                         <div class="col-12 col-md-6">
+                            @if (Model.ExistsInCard)
+                            {
+                            <a asp-action="RemoveFromCart" asp-controller="Home" asp-route-id="@Model.product.ProId" class="btn btn-warning form-control btn-lg" ><i class="fa fa-remove">&nbsp;</i> Remove From Cart</a>
+                            }
+                            else
+                            {
                             <input type="submit" class="btn btn-primary form-control btn-lg" value="Add to cart" />
+                            }
                         </div>
                     </div>
                 </div>
-
 
             </div>
         </div>

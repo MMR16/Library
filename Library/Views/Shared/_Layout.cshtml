@@ -24,6 +24,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -46,13 +47,15 @@
                 <a asp-action="Index" asp-controller="Cart" class="nav-link">
                     <i class="fa fa-shopping-cart"></i>&nbsp; @ItemsList.Count()
                 </a> }
-                            else
-                            {
+            else
+            {
                 <a href="#" class="nav-link">
                     <i class="fa fa-shopping-cart"></i>&nbsp; (0)
                 </a>}
                         </li>
                     </ul>
+
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>

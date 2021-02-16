@@ -67,10 +67,10 @@ namespace Library.Controllers
                     {
                         product.ExistsInCard = true;
                     }
-                    else
-                    {
-                        product.ExistsInCard = false;
-                    }
+                    //else
+                    //{
+                    //    product.ExistsInCard = false;
+                    //}
                 }
                 return View(product);
             }

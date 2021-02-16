@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Library.Models;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Library.Data
 {
@@ -12,7 +13,7 @@ namespace Library.Data
     //EntityFrameworkCore
     //EntityFrameworkCore.sqlserver
 
-    public class ApplicationDBContext: DbContext
+    public class ApplicationDBContext: IdentityDbContext
     {
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options):base(options)
         {

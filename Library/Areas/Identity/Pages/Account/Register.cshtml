@@ -2,16 +2,56 @@
 @model RegisterModel
 @{
     ViewData["Title"] = "Register";
+    string s = $"{WC.UserImagePath}User.svg";
+
 }
 
 <h1>@ViewData["Title"]</h1>
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        <form asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
             <h4>Create a new account.</h4>
             <hr />
             <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Input.UserFName"></label>
+                <input asp-for="Input.UserFName" class="form-control" />
+                <span asp-validation-for="Input.UserFName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Input.UserLName"></label>
+                <input asp-for="Input.UserLName" class="form-control" />
+                <span asp-validation-for="Input.UserLName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Input.PhoneNumber"></label>
+                <input asp-for="Input.PhoneNumber" class="form-control" />
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group row justify-content-center"><img src=@s style="width:22rem; height:22rem; border-radius:50%;" alt="Product Image" /></div>
+
+
+            <div class="form-group row">
+                <label asp-for="Input.UserImage"></label>
+                <input type="file" accept="image/*" asp-for="Input.UserImage" id="uploadbox" alt="User Image" class="form-control" />
+                <span asp-validation-for="Input.UserImage" class="text-danger"></span>
+                @if (ViewBag.ImageError is not null)
+                {
+                    <div class="col-3"><span class="text-danger">@ViewBag.ImageError</span></div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Input.UserName"></label>
+                <input asp-for="Input.UserName" class="form-control" />
+                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <label asp-for="Input.Email"></label>
                 <input asp-for="Input.Email" class="form-control" />
@@ -64,4 +104,15 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        const inputfile = document.getElementById("uploadbox");
+        inputfile.addEventListener("change", (e) => {
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+                const image = document.getElementsByTagName("img")[0];
+                image.src = reader.result;
+            })
+            reader.readAsDataURL(e.target.files[0])
+        })
+    </script>
 }

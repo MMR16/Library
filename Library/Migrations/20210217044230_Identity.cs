@@ -3,19 +3,22 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Library.Migrations
 {
-    public partial class AddinIdentity : Migration
+    public partial class Identity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
-                name: "ProShortDescription",
-                table: "Products",
-                type: "nvarchar(80)",
-                maxLength: 80,
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(40)",
-                oldMaxLength: 40);
+            migrationBuilder.CreateTable(
+                name: "AppTypes",
+                columns: table => new
+                {
+                    TypeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TypeName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppTypes", x => x.TypeId);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
@@ -54,6 +57,20 @@ namespace Library.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    CatId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CatName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    DisplayOrder = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.CatId);
                 });
 
             migrationBuilder.CreateTable(
@@ -162,6 +179,38 @@ namespace Library.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    ProId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ProDescription = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: true),
+                    ProShortDescription = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: false),
+                    ProPrice = table.Column<double>(type: "float", nullable: false),
+                    ProImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Currencies = table.Column<int>(type: "int", nullable: false),
+                    CatId = table.Column<int>(type: "int", nullable: false),
+                    TypeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.ProId);
+                    table.ForeignKey(
+                        name: "FK_Products_AppTypes_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "AppTypes",
+                        principalColumn: "TypeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Products_Categories_CatId",
+                        column: x => x.CatId,
+                        principalTable: "Categories",
+                        principalColumn: "CatId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -200,6 +249,16 @@ namespace Library.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CatId",
+                table: "Products",
+                column: "CatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_TypeId",
+                table: "Products",
+                column: "TypeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -220,20 +279,19 @@ namespace Library.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Products");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
-            migrationBuilder.AlterColumn<string>(
-                name: "ProShortDescription",
-                table: "Products",
-                type: "nvarchar(40)",
-                maxLength: 40,
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(80)",
-                oldMaxLength: 80);
+            migrationBuilder.DropTable(
+                name: "AppTypes");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
         }
     }
 }

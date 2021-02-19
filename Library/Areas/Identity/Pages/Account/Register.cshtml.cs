@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Library.Data;
+using Library.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -21,6 +24,9 @@ namespace Library.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
+        //Role Manger
+        private readonly RoleManager<IdentityRole> _roleManager;
+
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
@@ -28,16 +34,21 @@ namespace Library.Areas.Identity.Pages.Account
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
+        //Bind Property To Bind data 2 Ways Between View & Model
         [BindProperty]
         public InputModel Input { get; set; }
+        [BindProperty]
+        public string UserImage { get; set; }
 
         public string ReturnUrl { get; set; }
 
@@ -60,10 +71,40 @@ namespace Library.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            //adding more to Register Model
+            [Required(ErrorMessage = "Please Enter Your First Name")]
+            [StringLength(15, MinimumLength = 2, ErrorMessage = "First Name Must Be Between 2~15 Letters")]
+            [Display(Name = "First Name")]
+            public string UserFName { get; set; }
+
+            [Display(Name = "Last Name")]
+            [StringLength(15, MinimumLength = 2, ErrorMessage = "Last Name Must Be Between 2~15 Letters")]
+            public string UserLName { get; set; }
+
+            [DataType(DataType.PhoneNumber)]
+            [Required(ErrorMessage = "Please Enter Mobile Number")]
+            [Display(Name = "Mobile Number")]
+            public string PhoneNumber { get; set; }
+
+            [Display(Name = "User Name")]
+            [StringLength(10, MinimumLength = 2, ErrorMessage = "User Name Must Be Between 2~10 Letters")]
+            public string UserName { get; set; }
+
+            [DisplayName("Image")]
+            public string UserImage { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            //Creating Roles For First Time
+            //Check If Not Exist In Database
+            if (!await _roleManager.RoleExistsAsync(WC.AdminRole))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(WC.AdminRole));
+                await _roleManager.CreateAsync(new IdentityRole(WC.CustomerRole));
+            }
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -74,10 +115,28 @@ namespace Library.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
+                //Changing IdentityUser With AppUser To Get New Properties We Add
+                //add to container in startUp First
+                var user = new AppUser
+                {
+                    UserName = Input.UserFName,
+                    Email = Input.Email,
+                    PhoneNumber = Input.PhoneNumber,
+                    UserFName = Input.UserFName,
+                    UserLName = Input.UserLName,
+                };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
+                    if (User.IsInRole(WC.AdminRole))
+                    {
+                    await _userManager.AddToRoleAsync(user,WC.AdminRole);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user,WC.CustomerRole);
+                    }
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

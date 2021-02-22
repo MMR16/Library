@@ -1,4 +1,5 @@
 using Library.Data;
+using Library.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -40,7 +41,8 @@ namespace Library
             //5-add endpoint
             //To Add Role To Services We Change  AddDefaultIdentity to AddIdentity & Add IdentityRole 
             //With AddDefaultTokenProviders & AddDefaultUI
-            services.AddIdentity<IdentityUser,IdentityRole>()
+            //services.AddIdentity<IdentityUser,IdentityRole>()
+            services.AddIdentity<AppUser,IdentityRole>()
                 .AddDefaultTokenProviders()
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<ApplicationDBContext>();
@@ -49,12 +51,12 @@ namespace Library
             services.Configure<IdentityOptions>(options =>
               {
                   // Password settings.
-                  options.Password.RequireDigit = true;
-                  options.Password.RequireLowercase = true;
-                  options.Password.RequireNonAlphanumeric = true;
-                  options.Password.RequireUppercase = true;
+                  options.Password.RequireDigit = false;
+                  options.Password.RequireLowercase = false;
+                  options.Password.RequireNonAlphanumeric = false;
+                  options.Password.RequireUppercase = false;
                   options.Password.RequiredLength = 6;
-                  options.Password.RequiredUniqueChars = 1;
+                  options.Password.RequiredUniqueChars = 0;
 
                   // Lockout settings.
                   options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);

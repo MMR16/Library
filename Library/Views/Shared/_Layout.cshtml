@@ -38,20 +38,26 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="AppType" asp-action="Index">Aplication Type</a>
                         </li>
+                        @if (User.IsInRole(WC.AdminRole))
+                        {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register Admin User</a>
+                        </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">About</a>
                         </li>
                         <li>
                             @if (ItemsList is not null)
                             {
-                <a asp-action="Index" asp-controller="Cart" class="nav-link">
-                    <i class="fa fa-shopping-cart"></i>&nbsp; @ItemsList.Count()
-                </a> }
-            else
-            {
-                <a href="#" class="nav-link">
-                    <i class="fa fa-shopping-cart"></i>&nbsp; (0)
-                </a>}
+                    <a asp-action="Index" asp-controller="Cart" class="nav-link">
+                        <i class="fa fa-shopping-cart"></i>&nbsp; @ItemsList.Count()
+                    </a> }
+                else
+                {
+                    <a href="#" class="nav-link">
+                        <i class="fa fa-shopping-cart"></i>&nbsp; (0)
+                    </a>}
                         </li>
                     </ul>
 

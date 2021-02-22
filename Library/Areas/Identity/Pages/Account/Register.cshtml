@@ -5,8 +5,15 @@
     string s = $"{WC.UserImagePath}User.svg";
 
 }
+@if (User.IsInRole(WC.AdminRole))
+{
+    <h1>@ViewData["Title"] Admin Account</h1>
 
-<h1>@ViewData["Title"]</h1>
+}
+else
+{
+<h1>@ViewData["Title"] User Account</h1>
+}
 
 <div class="row">
     <div class="col-md-4">
@@ -33,7 +40,7 @@
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
 
-            <div class="form-group row justify-content-center"><img src=@s style="width:22rem; height:22rem; border-radius:50%;" alt="Product Image" /></div>
+            <div class="form-group row justify-content-center"><img src=@s style="width:22rem; height:22rem; border-radius:50%;" id="img" alt="@User.Identity.Name Image" /></div>
 
 
             <div class="form-group row">
@@ -42,7 +49,7 @@
                 <span asp-validation-for="Input.UserImage" class="text-danger"></span>
                 @if (ViewBag.ImageError is not null)
                 {
-                    <div class="col-3"><span class="text-danger">@ViewBag.ImageError</span></div>
+                    <span class="text-danger">@ViewBag.ImageError</span>
                 }
             </div>
 
@@ -67,7 +74,15 @@
                 <input asp-for="Input.ConfirmPassword" class="form-control" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-primary">Register</button>
+            @if (User.IsInRole(WC.AdminRole))
+            {
+                <button type="submit" class="btn btn-warning">Register Admin User </button>
+
+            }
+            else
+            {
+            <button type="submit" class="btn btn-primary">Register New User</button>
+            }
         </form>
     </div>
     <div class="col-md-6 col-md-offset-2">
@@ -109,7 +124,7 @@
         inputfile.addEventListener("change", (e) => {
             const reader = new FileReader();
             reader.addEventListener("load", () => {
-                const image = document.getElementsByTagName("img")[0];
+                const image = document.getElementById("img");
                 image.src = reader.result;
             })
             reader.readAsDataURL(e.target.files[0])

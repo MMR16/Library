@@ -18,6 +18,6 @@ namespace Library.Models
 
         public string UserImage { get; set; }
 
-  
+        public override int AccessFailedCount { get => base.AccessFailedCount; set => base.AccessFailedCount = value; }
     }
 }

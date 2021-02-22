@@ -1,6 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using System.Transactions;
+using Library.Data;
+using Library.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,18 +14,22 @@ namespace Library.Areas.Identity.Pages.Account.Manage
 {
     public class DeletePersonalDataModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
+        private readonly IWebHostEnvironment webHostEnvironment;
+
 
         public DeletePersonalDataModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
-            ILogger<DeletePersonalDataModel> logger)
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
+            ILogger<DeletePersonalDataModel> logger,
+            IWebHostEnvironment _webHostEnvironment)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            webHostEnvironment = _webHostEnvironment;
         }
 
         [BindProperty]
@@ -66,17 +74,26 @@ namespace Library.Areas.Identity.Pages.Account.Manage
                 }
             }
 
-            var result = await _userManager.DeleteAsync(user);
-            var userId = await _userManager.GetUserIdAsync(user);
-            if (!result.Succeeded)
+            //Transaction to do all code & if any error it will rollback
+            using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                throw new InvalidOperationException($"Unexpected error occurred deleting user with ID '{userId}'.");
+                //deleting User image
+                //getting image
+                var ImageName = user.UserImage.ToString();
+                string OldImage = webHostEnvironment.WebRootPath + WC.UserImagePath + ImageName;
+                System.IO.File.Delete(OldImage);
+
+                var result = await _userManager.DeleteAsync(user);
+                var userId = await _userManager.GetUserIdAsync(user);
+                if (!result.Succeeded)
+                {
+                    throw new InvalidOperationException($"Unexpected error occurred deleting user with ID '{userId}'.");
+                }
+
+                await _signInManager.SignOutAsync();
+                _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
+                scope.Complete();
             }
-
-            await _signInManager.SignOutAsync();
-
-            _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
-
             return Redirect("~/");
         }
     }

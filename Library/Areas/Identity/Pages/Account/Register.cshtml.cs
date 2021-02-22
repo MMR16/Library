@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -10,6 +11,7 @@ using Library.Data;
 using Library.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -22,26 +24,34 @@ namespace Library.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
         //Role Manger
         private readonly RoleManager<IdentityRole> _roleManager;
 
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
+        private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly ApplicationDBContext Db;
+
         public RegisterModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            ApplicationDBContext _Db,
+        IWebHostEnvironment _webHostEnvironment
+            )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            Db = _Db;
+            webHostEnvironment = _webHostEnvironment;
         }
 
         //Bind Property To Bind data 2 Ways Between View & Model
@@ -117,24 +127,77 @@ namespace Library.Areas.Identity.Pages.Account
             {
                 //Changing IdentityUser With AppUser To Get New Properties We Add
                 //add to container in startUp First
-                var user = new AppUser
+                var user = new AppUser();
+                //setting Properties
+                user.UserName = Input.UserName;
+                user.Email = Input.Email;
+                user.PhoneNumber = Input.PhoneNumber;
+                user.UserFName = Input.UserFName;
+                user.UserLName = Input.UserLName;
+
+                //Image File
+                #region Image File Upload
+                var files = HttpContext.Request.Form.Files;
+                if (files.Count < 1)
                 {
-                    UserName = Input.UserFName,
-                    Email = Input.Email,
-                    PhoneNumber = Input.PhoneNumber,
-                    UserFName = Input.UserFName,
-                    UserLName = Input.UserLName,
-                };
-                var result = await _userManager.CreateAsync(user, Input.Password);
-                if (result.Succeeded)
+                    ViewData["ImageError"] = "Please User Upload Image ";
+                    return Page();
+                }
+                if (files.Count is not 1)
                 {
-                    if (User.IsInRole(WC.AdminRole))
+                    ViewData["ImageError"] = "Please Upload one Image only don't think you'r so smart";
+                    return Page();
+                }
+                string extention = Path.GetExtension(files[0].FileName);
+                if (Path.HasExtension(extention))
+                {
+                    //for vaildate image by the type "image"
+                    //better than extentions beccause i onky know about 5 extention of images
+                    string image_type = string.Join("", files[0].ContentType.Take(5)).ToLower();
+                    if (image_type == "image")
                     {
-                    await _userManager.AddToRoleAsync(user,WC.AdminRole);
+                        string webrootbath = webHostEnvironment.WebRootPath;
+                        string upload = webrootbath + WC.UserImagePath;
+                        string filename = Guid.NewGuid().ToString(); // to create guid image name to avoid duplication errors
+                        using (var filestream = new FileStream(Path.Combine(upload, filename + extention), FileMode.Create))
+                        {
+                            files[0].CopyTo(filestream);
+                        }
+                        //setting Image Name
+                        user.UserImage = filename + extention;
                     }
                     else
                     {
-                        await _userManager.AddToRoleAsync(user,WC.CustomerRole);
+                        ViewData["ImageError"] = "Please Upload Proper Image";
+                        return Page();
+                    }
+                }
+                else
+                {
+
+                    ViewData["ImageError"] = "Please Upload Proper Image";
+                    return Page();
+                }
+
+                #endregion
+                var result = await _userManager.CreateAsync(user, Input.Password);
+                if (result.Succeeded)
+                {
+                    var UsersNo = Db.Users.Count();
+                    //Register First User As Admin User
+                    if (UsersNo < 2 && UsersNo > 0)
+                    {
+                        await _userManager.AddToRoleAsync(user, WC.AdminRole);
+                    }
+                    else if (User.IsInRole(WC.AdminRole))
+                    {
+                        await _userManager.AddToRoleAsync(user, WC.AdminRole);
+                        return LocalRedirect(returnUrl);
+
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, WC.CustomerRole);
                     }
 
                     _logger.LogInformation("User created a new account with password.");
@@ -156,8 +219,16 @@ namespace Library.Areas.Identity.Pages.Account
                     }
                     else
                     {
+                        //Log In Automatically After Register if any User Register 
+                        if (!User.IsInRole(WC.AdminRole ))
+                        {
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
+                        }
+                        else
+                        {
+                            return LocalRedirect(returnUrl);
+                        }
                     }
                 }
                 foreach (var error in result.Errors)

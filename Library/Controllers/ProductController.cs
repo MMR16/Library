@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using System.Transactions;
 
 namespace Library.Controllers
 {
@@ -248,7 +249,7 @@ namespace Library.Controllers
             var pro = Db.Products.Any(q => q.ProId == id);
             if (pro)
             {
-                var product = Db.Products.Include(q => q.Category).Include(q=>q.AppType).FirstOrDefault(q => q.ProId == id);
+                var product = Db.Products.Include(q => q.Category).Include(q => q.AppType).FirstOrDefault(q => q.ProId == id);
                 return View(product);
             }
             return NotFound();
@@ -267,15 +268,20 @@ namespace Library.Controllers
             if (pro)
             {
                 var product = Db.Products.Find(id);
-                //deleting Product image
-                //getting image
-                var ImageName = product.ProImage.ToString();
-                string OldImage = webHostEnvironment.WebRootPath + WC.ImagePath + ImageName;
-                System.IO.File.Delete(OldImage);
+                //Transaction to do all code & if any error it will rollback
+                using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    //deleting Product image
+                    //getting image
+                    var ImageName = product.ProImage.ToString();
+                    string OldImage = webHostEnvironment.WebRootPath + WC.ImagePath + ImageName;
+                    System.IO.File.Delete(OldImage);
 
-                //deleting from database
-                Db.Remove(product);
-                Db.SaveChanges();
+                    //deleting from database
+                    Db.Remove(product);
+                    Db.SaveChanges();
+                    scope.Complete();
+                }
                 return RedirectToAction(nameof(Index));
             }
             return NotFound();

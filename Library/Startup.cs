@@ -1,9 +1,11 @@
 using Library.Data;
 using Library.Models;
+using Library.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,6 +48,8 @@ namespace Library
                 .AddDefaultTokenProviders()
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<ApplicationDBContext>();
+
+            services.AddTransient<IEmailSender, EmailSender>();
             //Configure Identity
             #region Identity Configurations
             services.Configure<IdentityOptions>(options =>

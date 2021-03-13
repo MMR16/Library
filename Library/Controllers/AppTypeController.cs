@@ -7,9 +7,11 @@ using Library.Data;
 using Library.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Library.Controllers
 {
+    [Authorize(Roles =WC.AdminRole)]
     public class AppTypeController : Controller
     {
         private readonly ApplicationDBContext Db;

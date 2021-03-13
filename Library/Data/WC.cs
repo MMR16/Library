@@ -11,7 +11,7 @@ namespace Library.Data
         public static string UserImagePath = @"\images\User\";
         public static string SessinCart = "ShoppingCartSession";
 
-        public static string AdminRole = "Admin";
-        public static string CustomerRole = "Customer";
+        public const string AdminRole = "Admin";
+        public const string CustomerRole = "Customer";
     }
 }

@@ -3,8 +3,16 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Index</h1>
+@if (Model?.Count() is null or 0)
+{
+    <div class="row">
+    <h3 class="text-danger col-lg-10 col-md-10 col-sm-12">you have No Product in cart </h3>
+    <a  asp-action="index" asp-controller="Home" class="btn btn-secondary  text-center">Add Some</a>
+        </div>
+}
+else
+{
+<h3>you have <span class="text-danger"> "@Model.Count()"</span> product on cart </h3>
 
 <form asp-action="Index" asp-controller="Cart" method="post">
     <div class="background bg-white border">
@@ -27,7 +35,7 @@
                                     Product Details
                                 </div>
                                 <div class="col-12 col-lg-2">
-                                 Price
+                                    Price
                                 </div>
                                 <div class="col-6 col-sm-4 col-lg-1"></div>
                             </div>
@@ -39,14 +47,14 @@
                                     <img src="@WC.ImagePath@item.ProImage" style="width:inherit; height:inherit;" class="rounded" alt="Alternate Text" />
                                 </div>
                                 <div class="col-8 col-lg-7">
-                                    <h5>@Html.DisplayFor(q=>item.ProName)</h5>
-                                    <div style="font-size:17px;"> @Html.Raw(item.ProDescription)</div>
+                                    <h5>@Html.DisplayFor(q => item.ProName)</h5>
+                                    <div style="font-size:17px;"> @Html.Raw(item.ProShortDescription)</div>
                                 </div>
                                 <div class="col-3 col-lg-2 pt-lg-4" style="font-size:11px;">
-                                    <span style="font-size:17px">@Html.DisplayFor(q=>item.ProPrice)</span>/ @Html.DisplayFor(q=>item.Currencies)
+                                    <span style="font-size:17px">@Html.DisplayFor(q => item.ProPrice)</span>/ @Html.DisplayFor(q => item.Currencies)
                                 </div>
                                 <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
-                                    <a class="btn btn-outline-danger">
+                                    <a asp-route-id="@item.ProId" asp-action="Delete" class="btn btn-outline-danger">
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </div>
@@ -66,3 +74,4 @@
         </div>
     </div>
 </form>
+}

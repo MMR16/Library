@@ -1,5 +1,6 @@
 ﻿using Library.Data;
 using Library.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Library.Controllers
 {
+    [Authorize(Roles =WC.AdminRole)]
     public class CategoryController : Controller
     {
         private readonly ApplicationDBContext Db;

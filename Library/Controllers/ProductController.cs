@@ -11,9 +11,11 @@ using Library.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Transactions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Library.Controllers
 {
+    [Authorize(Roles = WC.AdminRole)]
     public class ProductController : Controller
     {
         private readonly ApplicationDBContext Db;

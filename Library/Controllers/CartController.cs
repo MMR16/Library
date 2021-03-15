@@ -96,7 +96,7 @@ namespace Library.Controllers
 
             ProductUserVM = new ProductUserViewModel()
             {
-                AppUser = db.AppUsers.FirstOrDefault(q=>q.Id == UserId)
+                AppUser = db.AppUsers.FirstOrDefault(q=>q.Id == UserId),productList= productList.ToList()
             };
 
 

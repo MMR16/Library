@@ -11,7 +11,7 @@ namespace Library.ViewModels
     public class ProductUserViewModel
     {
         public AppUser AppUser { get; set; }
-        public IEnumerable<Product> productList { get; set; }
+        public IList<Product> productList { get; set; }
 
 
         public ProductUserViewModel()

@@ -1,0 +1,114 @@
+﻿@model ProductUserViewModel
+@{
+    ViewData["Title"] = "Summary";
+}
+
+<h1>Summary</h1>
+
+<form method="post">
+    <br />
+    <div class="backgroundWhiteBorder">
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-dark text-light ml-0 row container">
+                    <div class="col-6">
+                        <i class="fa fa-shopping-cart"></i> &nbsp;
+                        Order Summary
+                    </div>
+                    <div class="col-6 text-right">
+                        <a asp-action="index" asp-controller="cart" class="btn btn-outline-info btn-sm">Back to Cart</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="container rounded p-2">
+                        <div class="row">
+                            <div class="col-12 col-lg-7 pb-4">
+                                <div class="row">
+                                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-info">User Details:</span>
+                                    </h4>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>First Name</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input asp-for="AppUser.UserFName" class="form-control" />
+                                        <span class="text-danger" asp-validation-for="AppUser.UserFName"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>Last Name</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input asp-for="AppUser.UserLName" class="form-control" />
+                                        <span class="text-danger" asp-validation-for="AppUser.UserLName"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>Phone</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input asp-for="AppUser.PhoneNumber" class="form-control" />
+                                        <span class="text-danger" asp-validation-for="AppUser.PhoneNumber"></span>
+                                    </div>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>Email</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input asp-for="AppUser.Email" class="form-control" />
+                                        <span class="text-danger" asp-validation-for="AppUser.Email"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-5 row">
+                                <div class="col-12">
+                                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-info">Order Summary:</span>
+                                    </h4>
+                                    @*@foreach (var item in Model.productList)*@
+                                    @for (int i = 0; i < Model.productList.Count(); i++)
+                                    {
+                                        <ul class="list-group mb-3">
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <div>
+                                                    @*adding input & Using For loop for the form *@
+                                                    <input type="hidden" asp-for="@Model.productList[i].ProId" />
+                                                    <input type="hidden" asp-for="@Model.productList[i].ProName" />
+
+                                                    <h6 class="text-muted">@Html.DisplayFor(q => Model.productList[i].ProPrice) @Html.DisplayFor(q => Model.productList[i].Currencies)</h6>
+                                                    <h6 class="my-0">@Html.DisplayFor(q => Model.productList[i].ProName)</h6>
+
+                                                    @*<h6 class="text-muted">@Html.DisplayFor(q => item.ProPrice) @Html.DisplayFor(q=>item.Currencies)</h6>*@
+                                                    @* <h6 class="my-0">@Html.DisplayFor(q=>item.ProName)</h6>*@
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-12 col-md-5 offset-md-7">
+                            <button type="submit" class="btn btn-primary form-control">Submit Inquiry</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
